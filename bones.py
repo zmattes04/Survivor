@@ -49,6 +49,6 @@ class Bones(pygame.sprite.Sprite):
         m = merge_button.draw(surface)
         if s:
             self.sold = True
-        if s:
+
 
 
