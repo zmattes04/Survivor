@@ -1,9 +1,11 @@
 import random
 import sys
 import button
+import inventory
 import player
 import pygame
 import bones
+import time
 
 def main():
     pygame.init()
@@ -28,7 +30,11 @@ def main():
     all_sprites = pygame.sprite.Group()
     bones_group = pygame.sprite.Group()
 
-    bone = bones.Bones(100, 500, 500)
+    player_inventory = inventory.Inventory(500, 850, 20, user)
+
+
+
+    bone = bones.Bones(100, random.randint(50, 1300), random.randint(50, 850))
     all_sprites.add(user)
     all_sprites.add(bone)
     bones_group.add(bone)
@@ -53,14 +59,14 @@ def main():
     background_image = pygame.transform.scale(background_image, (SCREEN.get_width(), SCREEN.get_height()))
 
     #create buttons
-    resume_button = button.Button(500, 300, resume_img, 1)
-    options_button = button.Button(500, 400, options_img, 1)
-    quit_button = button.Button(500, 500, quit_img, 1)
+    resume_button = button.Button(1200, 300, resume_img, 1)
+    options_button = button.Button(1200, 400, options_img, 1)
+    quit_button = button.Button(1200, 500, quit_img, 1)
     quit_button_intro = button.Button(500, 400, quit_img, 1)
-    video_button = button.Button(500, 500, video_img, 1)
-    audio_button = button.Button(500, 400, audio_img, 1)
-    keys_button = button.Button(500, 300, keys_img, 1)
-    back_button = button.Button(500, 600, back_img, 1)
+    video_button = button.Button(800, 500, video_img, 1)
+    audio_button = button.Button(800, 400, audio_img, 1)
+    keys_button = button.Button(800, 300, keys_img, 1)
+    back_button = button.Button(800, 600, back_img, 1)
 
 
 
@@ -88,7 +94,7 @@ def main():
                 if event.key == pygame.K_ESCAPE:
                     game_Paused = True
                     print("pressed")
-                if event.key == pygame.K_q:
+                if event.key == pygame.K_p:
                     run = False
 
 
@@ -104,6 +110,25 @@ def main():
                 run = False
         if game_Paused == True:
             #check menu state
+            if game_started == True:
+                opened = 1
+                player_inventory.draw_inventory(SCREEN)
+                player_inventory.display_items(SCREEN)
+                draw_text("Game Paused", mainfont, white, 600, 100)
+                for index in range(player_inventory.cur_size):
+                    item = player_inventory.get_item(index)
+
+                    if item.opened_in_inven == True and opened == 1:
+                        pygame.draw.rect(SCREEN, (0, 100, 100), (750, 300, 400, 500), 2)
+                        item.display_stats(SCREEN)
+                        opened = 0
+                    if item.opened_in_inven == False:
+
+                        opened = 1
+
+                        #pygame.draw.rect(SCREEN, (0, 100, 100), (750, 300, 400, 500))
+            # if pygame.key.get_pressed()[pygame.K_q]:
+            #     game_Paused = False
 
             if menu_state == "main":
                 #draw pause screen buttons
@@ -137,26 +162,32 @@ def main():
             bones_x = random.randint(50, 1300)
             bones_y = random.randint(50, 850)
             bones_group.draw(SCREEN)
-            if pygame.sprite.spritecollide(user, bones_group, True, pygame.sprite.collide_mask):
-                user.bones += 1
-                cur_exp += 1
+            collided_bones = pygame.sprite.spritecollide(user, bones_group, False, pygame.sprite.collide_mask)
+            if collided_bones is not None and (player_inventory.cur_size != player_inventory.totalsize):
+                for collected_bone in collided_bones:
+                    user.bones += 1
+                    cur_exp += 1
+                    player_inventory.add_bone(collected_bone)
+
+                    collected_bone.kill()
+                    player_inventory.list_inventory()
+
 
                 if cur_exp == exp_needed:
                     user.exp += 1
                     exp_needed = exp_needed + 5
                     cur_exp = 0
 
-                print(user.bones)
+
 
             if len(bones_group) < 1:
                 bone = bones.Bones(100, bones_x, bones_y)
                 all_sprites.add(bone)
                 bones_group.add(bone)
 
-            if
+            #if :
 
 
-            #if user.get_location() == (bones_x, bones_y):
 
             user.update()
 
