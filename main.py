@@ -6,7 +6,7 @@ import player
 import pygame
 import bones
 import time
-
+import wolf
 def main():
     pygame.init()
 
@@ -25,10 +25,12 @@ def main():
     cur_exp = 0
     # initalize the player
     user = player.Player()
-
+    #initalized wolf
+    wolf1 = wolf.Wolf(800, 800, None)
     #create Sprite Groups
     all_sprites = pygame.sprite.Group()
     bones_group = pygame.sprite.Group()
+    enemy_group = pygame.sprite.Group()
 
     player_inventory = inventory.Inventory(500, 850, 20, user)
 
@@ -36,6 +38,8 @@ def main():
 
     bone = bones.Bones(100, random.randint(50, 1300), random.randint(50, 850))
     all_sprites.add(user)
+    all_sprites.add(wolf1)
+    enemy_group.add(wolf1)
     all_sprites.add(bone)
     bones_group.add(bone)
 
@@ -110,6 +114,7 @@ def main():
                 run = False
         if game_Paused == True:
             #check menu state
+            #in game inventory system
             if game_started == True:
                 opened = 1
                 player_inventory.draw_inventory(SCREEN)
@@ -117,7 +122,7 @@ def main():
                 draw_text("Game Paused", mainfont, white, 600, 100)
                 for index in range(player_inventory.cur_size):
                     item = player_inventory.get_item(index)
-
+                    #opens or closes the stats
                     if item.opened_in_inven == True and opened == 1:
                         pygame.draw.rect(SCREEN, (0, 100, 100), (750, 300, 400, 500), 2)
                         item.display_stats(SCREEN)
@@ -146,7 +151,8 @@ def main():
                 if back_button.draw(SCREEN):
                     menu_state = "main"
         if game_started == True and game_Paused == False:
-
+            wolf1.MoveTo(user)
+            enemy_group.draw(SCREEN)
 
             bones_display = resource_fonts.render(f'Bones: {user.bones}', True, (255, 255, 255))
             experience_display = resource_fonts.render(f'LVL: {user.exp}', True, (255, 255, 255))

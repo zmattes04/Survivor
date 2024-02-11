@@ -36,14 +36,15 @@ class Bones(pygame.sprite.Sprite):
         surface.blit(count_display, (770, 600))
         surface.blit(x_display, (770, 630))
         surface.blit(y_display, (770, 660))
+
+        #Create button images and then buttons
         sell_image = pygame.image.load("images/Sell_button.png").convert_alpha()
         drop_image = pygame.image.load("images/Drop_Button.png").convert_alpha()
-
         sell_button = button.Button(770, 690, sell_image, 3.50)
         drop_button = button.Button(880, 690, sell_image, 3.50)
         merge_button = button.Button(990, 690, sell_image, 3.50)
 
-
+        #initalize buttons
         s = sell_button.draw(surface)
         d = drop_button.draw(surface)
         m = merge_button.draw(surface)

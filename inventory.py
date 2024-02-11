@@ -74,6 +74,8 @@ class Inventory():
         self.draw_box(surface, 520, 600)
         self.draw_box(surface, 620, 600)
 
+    #This displays the items in the inventory it also uses logic and a double locking system to
+    # decide if it been clicked and chooses to open stats
     def display_items(self, surface):
         horizontal_inc = 0
         vertical_inc = 0
@@ -92,6 +94,7 @@ class Inventory():
                 item_button = button.Button(220 + horizontal_inc, 300 + vertical_inc, item.image, .46)
                 #surface.blit(item.image, ((220 + horizontal_inc), 300 + vertical_inc))
                 b = item_button.draw(surface)
+                #Decides if it is already open or closed
                 if b and self.opened == False:
                     time.sleep(.2)
                     item.opened_in_inven = not item.opened_in_inven
