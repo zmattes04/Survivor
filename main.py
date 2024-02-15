@@ -1,13 +1,12 @@
 import random
 import sys
 import button
-import fist
-import inventory
+import weapons
 import player
 import pygame
-import bones
+import items
 import time
-import wolf
+import enemies
 def main():
     pygame.init()
 
@@ -42,17 +41,17 @@ def main():
     for i in range(50):
         rand_x = random.randint(50, 1300)
         rand_y = random.randint(50, 850)
-        wolf1 = wolf.Wolf(rand_x, rand_y, None)
+        wolf1 = enemies.Wolf(rand_x, rand_y, None)
         all_sprites.add(wolf1)
         enemy_group.add(wolf1)
     #create Sprite Groups
 
 
-    player_inventory = inventory.Inventory(500, 850, 20, user)
+    player_inventory = player.Inventory(500, 850, 20, user)
 
 
 
-    bone = bones.Bones(100, random.randint(50, 1300), random.randint(50, 850))
+    bone = items.Bones(100, random.randint(50, 1300), random.randint(50, 850))
     all_sprites.add(user)
 
     all_sprites.add(bone)
@@ -224,7 +223,7 @@ def main():
 
 
             if len(bones_group) < 1:
-                bone = bones.Bones(100, bones_x, bones_y)
+                bone = items.Bones(100, bones_x, bones_y)
                 all_sprites.add(bone)
                 bones_group.add(bone)
 
