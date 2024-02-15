@@ -1,6 +1,7 @@
 import random
 import sys
 import button
+import fist
 import inventory
 import player
 import pygame
@@ -19,12 +20,19 @@ def main():
     game_started = False
     game_Paused = False
     menu_state = "main"
+    game_ended = False
 
     #Start of game variables
     exp_needed = 5
     cur_exp = 0
     # initalize the player
-    user = player.Player()
+
+    weapon = "fist"
+    #check weapon for user
+    if weapon == "fist":
+
+        user = player.Player(weapon)
+
     #initalized wolf
     wolf1 = wolf.Wolf(800, 800, None)
     #create Sprite Groups
@@ -151,7 +159,13 @@ def main():
                 if back_button.draw(SCREEN):
                     menu_state = "main"
         if game_started == True and game_Paused == False:
+
+            if user.health < 0:
+                game_ended = True
+
+
             wolf1.MoveTo(user)
+            wolf1.attack_target(user)
             enemy_group.draw(SCREEN)
 
             bones_display = resource_fonts.render(f'Bones: {user.bones}', True, (255, 255, 255))
@@ -162,8 +176,14 @@ def main():
             SCREEN.blit(experience_display, (1350,920))
             SCREEN.blit(shiny_rocks_display, (1350,940))
 
-            rotated_user, user_position = user.face_mouse()
+            rotated_user, rotated_weapon, weapon_location, user_position = user.face_mouse()
+            #rotated_user, user_position = user.face_mouse()
+
             SCREEN.blit(rotated_user, user_position)
+            SCREEN.blit(rotated_weapon, weapon_location)
+            #SCREEN.blit(rotated_weapon, weapon_position)
+
+
             #creating bone location
             bones_x = random.randint(50, 1300)
             bones_y = random.randint(50, 850)
@@ -197,8 +217,12 @@ def main():
 
             user.update()
 
+        if game_ended == True:
 
-
+            SCREEN.fill((0, 100, 100))
+            if quit_button.draw(SCREEN):
+                run = False
+            draw_text("Game Over", mainfont, white, 600, 100)
         pygame.display.flip()
         clock.tick(60)
 

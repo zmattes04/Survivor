@@ -7,37 +7,37 @@ class Wolf(pygame.sprite.Sprite):
         self.y = y
         self.loot = loot
         self.health = 300
+        self.damage = 50
+        self.attack_speed = 0
         original_image = pygame.image.load("images/EnemyTemp.png").convert_alpha()
         self.image = pygame.transform.scale(original_image, (150, 150))
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.x, self.y)
 
     #Move to target
+    def attack_target(self, target):
+
+        if target.x is not None and target.y is not None:
+            target_x = target.x
+            target_y = target.y
+
+            dx = target_x - self.x
+            dy = target_y - self.y
+            distance = (dx ** 2 + dy ** 2) ** 0.5
+            #Uses a counter for attack speed to time when it will attack
+            if distance < 50 and self.attack_speed == 0:
+                target.health = target.health - self.damage
+            if self.attack_speed == 300:
+                self.attack_speed = 0
+            else:
+                self.attack_speed += 1
     #Attack
     #King wolf can Howl spawns more
     #Dies
     #Draw
     #Gets Hit
 
-
-    # def MoveTo(self, target):
-    #     if target.x is not None and target.y is not None:
-    #         target_x = target.x
-    #         target_y = target.y
-    #         print("Target:" + str(target_x) +"," + str(target_y))
-    #         print("Wolf:" + str(self.x) +"," + str(self.y))
-    #
-    #         if self.x < target_x:
-    #             self.x += 4
-    #         if self.x > target_y:
-    #             self.x -= 4
-    #         if self.y < target_y:
-    #             self.y += 4
-    #         if self.y > target_y:
-    #             self.y -= 4
-    #
-    #         self.rect.center = (self.x, self.y)
-
+    #Moves toward targets
     def MoveTo(self, target):
         if target.x is not None and target.y is not None:
             target_x = target.x
