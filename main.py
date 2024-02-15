@@ -33,12 +33,20 @@ def main():
 
         user = player.Player(weapon)
 
-    #initalized wolf
-    wolf1 = wolf.Wolf(800, 800, None)
-    #create Sprite Groups
+
     all_sprites = pygame.sprite.Group()
     bones_group = pygame.sprite.Group()
     enemy_group = pygame.sprite.Group()
+    #initalized wolf
+
+    for i in range(50):
+        rand_x = random.randint(50, 1300)
+        rand_y = random.randint(50, 850)
+        wolf1 = wolf.Wolf(rand_x, rand_y, None)
+        all_sprites.add(wolf1)
+        enemy_group.add(wolf1)
+    #create Sprite Groups
+
 
     player_inventory = inventory.Inventory(500, 850, 20, user)
 
@@ -46,8 +54,7 @@ def main():
 
     bone = bones.Bones(100, random.randint(50, 1300), random.randint(50, 850))
     all_sprites.add(user)
-    all_sprites.add(wolf1)
-    enemy_group.add(wolf1)
+
     all_sprites.add(bone)
     bones_group.add(bone)
 
@@ -163,9 +170,9 @@ def main():
             if user.health < 0:
                 game_ended = True
 
-
-            wolf1.MoveTo(user)
-            wolf1.attack_target(user)
+            for wolf_enemy in enemy_group:
+                wolf_enemy.MoveTo(user)
+                wolf_enemy.attack_target(user)
             enemy_group.draw(SCREEN)
 
             bones_display = resource_fonts.render(f'Bones: {user.bones}', True, (255, 255, 255))
@@ -180,10 +187,20 @@ def main():
             #rotated_user, user_position = user.face_mouse()
 
             SCREEN.blit(rotated_user, user_position)
-            SCREEN.blit(rotated_weapon, weapon_location)
+
             #SCREEN.blit(rotated_weapon, weapon_position)
 
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_SPACE]:
+                l = user.attack(weapon_location)
+                collided_enemies = pygame.sprite.spritecollide(user, enemy_group, False, pygame.sprite.collide_mask)
+                if collided_enemies is not None:
+                    for enemy in collided_enemies:
+                        enemy.kill()
+                SCREEN.blit(rotated_weapon, l)
 
+            else:
+                SCREEN.blit(rotated_weapon, weapon_location)
             #creating bone location
             bones_x = random.randint(50, 1300)
             bones_y = random.randint(50, 850)

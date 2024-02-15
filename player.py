@@ -14,10 +14,10 @@ class Player(pygame.sprite.Sprite):
         self.shiny_rocks = 0
         self.exp = 1
         self.weapon = weapon
-        original_image = pygame.image.load("images/" + weapon + ".png").convert_alpha()
+        original_image = pygame.image.load("images/Caveman.png").convert_alpha()
         self.image = pygame.transform.scale(original_image, (150, 150))
-        self.weapon_image = pygame.image.load("images/Fist_weapon.png").convert_alpha()
-
+        self.weapon_image = pygame.image.load("images/" + weapon + "_weapon.png").convert_alpha()
+        self.weapon_image = pygame.transform.rotate(self.weapon_image, -90)
 
 
         self.rect = self.image.get_rect()
@@ -155,6 +155,32 @@ class Player(pygame.sprite.Sprite):
     def get_location(self):
         return self.rect.topleft
 
-    def draw(self, surface):
-        surface.blit(self.image, self.rect)
+    # def draw(self, surface):
+    #     surface.blit(self.image, self.rect)
+
+    def attack(self, location_of_fist):
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        angle = math.atan2(mouse_y - self.rect.centery, mouse_x - self.rect.centerx)
+        angle = math.degrees(angle)
+        if 0 <= angle < 90:
+            weapon_angle = math.atan2(mouse_y - self.rect.centery + 30, mouse_x - self.rect.centerx)
+        elif 90 <= angle < 180:
+            weapon_angle = math.atan2(mouse_y - self.rect.centery, mouse_x - self.rect.centerx + 30)
+        elif 180 <= angle < 270:
+            weapon_angle = math.atan2(mouse_y - self.rect.centery - 30, mouse_x - self.rect.centerx)
+        else:
+            weapon_angle = math.atan2(mouse_y - self.rect.centery, mouse_x - self.rect.centerx - 30)
+
+        # Calculate angle between player and mouse
+
+        animation = 30
+        opp = animation * math.sin(weapon_angle)
+        adj = animation * math.cos(weapon_angle)
+
+        location = (location_of_fist[0] + adj, location_of_fist[1] + opp)
+
+
+
+
+        return location
 
