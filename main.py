@@ -171,6 +171,7 @@ def main():
                 game_ended = True
 
 
+
             for wolf_enemy in enemy_group:
                 wolf_enemy.MoveTo(user)
                 wolf_enemy.attack_target(user)
