@@ -67,6 +67,7 @@ class Wolf(pygame.sprite.Sprite):
             self.rect.center = (self.x, self.y)
 
 
+
     def draw_wolf(self, surface):
         surface.blit(self.image, self.rect)
 

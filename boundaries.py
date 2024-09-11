@@ -22,6 +22,7 @@ class Room:
         self.adjacentRooms = []
     def generate_walls(self, w, h):
 
+
         # Create the room boundary
         self.walls.append(Wall(0, 0, w, 10))  # Top
         self.doors.append(Door(w/3 * 2, 0, 150, 10))

@@ -200,6 +200,7 @@ class Inventory():
         horiz_count = 0
         vert_count = 0
 
+
         for index in range(self.cur_size):
             item = self.get_item(index)
             if horiz_count == 5:

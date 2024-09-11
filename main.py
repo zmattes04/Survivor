@@ -409,6 +409,7 @@ def main():
                 else:
                     moving_through_bottom_rooms = False
 
+
             # Top door transition
             if abs(user.x - (screen_width / 3 * 2)) <= xtolerance and abs(user.y) <= ytolerance:
                 if interact_with_door[pygame.K_f]:

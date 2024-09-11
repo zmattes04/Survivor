@@ -73,6 +73,7 @@ class Level_Select_Button():
             self.rect = pygame.Rect(x, y, width, height)
             self.clicked = False
 
+
         def draw(self, win, scroll_x=0, scroll_y=0):
             # Adjust position by the current scroll
             self.rect.topleft = (self.x + scroll_x, self.y + scroll_y)
