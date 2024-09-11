@@ -1,6 +1,8 @@
 import math
-import fist
+import weapons
 import pygame
+import button
+import time
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, weapon):
@@ -17,7 +19,10 @@ class Player(pygame.sprite.Sprite):
         original_image = pygame.image.load("images/Caveman.png").convert_alpha()
         self.image = pygame.transform.scale(original_image, (150, 150))
         self.weapon_image = pygame.image.load("images/" + weapon + "_weapon.png").convert_alpha()
+        if weapon == "Bow":
+            self.weapon_image = pygame.transform.scale(self.weapon_image, (75, 75))
         self.weapon_image = pygame.transform.rotate(self.weapon_image, -90)
+        self.weapon_image_size = self.weapon_image.get_size()
 
 
         self.rect = self.image.get_rect()
@@ -47,18 +52,7 @@ class Player(pygame.sprite.Sprite):
                 self.x += self.speed
         self.rect.center = (self.x, self.y)
 
-    def rotate_and_blit(self, screen, image, angle, position, offset, pivot_angle):
-        """Rotate an image and blit it to the screen at the specified position with an offset and pivot angle."""
-        # Rotate the image
-        rotated_image = pygame.transform.rotate(image, -angle)
-        rotated_rect = rotated_image.get_rect(center=position)
 
-        # Calculate the offset based on the pivot angle
-        offset_rotated = pygame.math.Vector2(offset).rotate(-angle)
-        offset_position = rotated_rect.center + offset_rotated
-
-        # Blit the rotated image to the screen
-        screen.blit(rotated_image, rotated_image.get_rect(center=offset_position))
 
     def face_mouse(self):
         # Get mouse position
@@ -69,13 +63,13 @@ class Player(pygame.sprite.Sprite):
         angle = math.degrees(angle)
         #calculate weapon angle
         if 0 <= angle < 90:
-            weapon_angle = math.atan2(mouse_y - self.rect.centery + 30, mouse_x - self.rect.centerx)
+            weapon_angle = math.atan2(mouse_y - self.rect.centery + 0.9375*self.weapon_image_size[0], mouse_x - self.rect.centerx)
         elif 90 <= angle < 180:
-            weapon_angle = math.atan2(mouse_y - self.rect.centery, mouse_x - self.rect.centerx + 30)
+            weapon_angle = math.atan2(mouse_y - self.rect.centery, mouse_x - self.rect.centerx + 0.9375*self.weapon_image_size[1])
         elif 180 <= angle < 270:
-            weapon_angle = math.atan2(mouse_y - self.rect.centery - 30, mouse_x - self.rect.centerx)
+            weapon_angle = math.atan2(mouse_y - self.rect.centery - 0.9375*self.weapon_image_size[0], mouse_x - self.rect.centerx)
         else:
-            weapon_angle = math.atan2(mouse_y - self.rect.centery, mouse_x - self.rect.centerx - 30)
+            weapon_angle = math.atan2(mouse_y - self.rect.centery, mouse_x - self.rect.centerx - 0.9375*self.weapon_image_size[1])
 
 
         # Rotate player image
@@ -89,69 +83,16 @@ class Player(pygame.sprite.Sprite):
         opp = weapon_hypotenuse * math.sin(weapon_angle + 345)
         adj = weapon_hypotenuse * math.cos(weapon_angle + 345)
 
-        location_of_weapon = (self.rect.centerx - 18 + adj, self.rect.centery - 18 + opp)
+        location_of_weapon = (self.rect.centerx - 0.5625*self.weapon_image_size[0] + adj, self.rect.centery - 0.5625*self.weapon_image_size[1] + opp)
 
 
-        print(weapon_angle)
+
         rotated_weapon = pygame.transform.rotate(self.weapon_image, -angle)
 
 
         return rotated_image, rotated_weapon, location_of_weapon, self.rect.topleft
 
-    # def face_mouse(self):
-    #     # Get mouse position
-    #     mouse_x, mouse_y = pygame.mouse.get_pos()
-    #
-    #     # Calculate angle between player and mouse in radians
-    #     angle_rad = math.atan2(mouse_y - self.rect.centery, mouse_x - self.rect.centerx)
-    #
-    #     # Convert angle to degrees
-    #     angle_deg = math.degrees(angle_rad)
-    #
-    #     # Rotate player image
-    #     rotated_image = pygame.transform.rotate(self.image, -angle_deg)
-    #     new_rect = rotated_image.get_rect(center=self.rect.center)
-    #
-    #     # Rotate weapon image
-    #     angle_of_weapon_maintained = 60
-    #     weapon_hypotenuse = 10
-    #
-    #     opp = weapon_hypotenuse * math.sin(angle_of_weapon_maintained)
-    #     adj = weapon_hypotenuse * math.cos(angle_of_weapon_maintained)
-    #
-    #     location_of_weapon = (self.rect.centerx + adj, self.rect.centery + opp)
-    #
-    #
-    #
-    #     rotated_weapon = pygame.transform.rotate(self.weapon_image, -angle_deg)
-    #
-    #
-    #     # Calculate the offset for the weapon based on where you want it to appear relative to the player
-    #     # This example assumes you want the weapon to appear right in front of the player
-    #     # weapon_offset_x = 0  # Adjust as necessary
-    #     # weapon_offset_y = -new_rect.height / 2  # Example offset; adjust as necessary
-    #     #
-    #     # # Create a new surface to combine both images with enough space
-    #     # # The new surface dimensions should be large enough to hold both images after rotation
-    #     # combined_surface_width = max(new_rect.width, rotated_weapon.get_width())
-    #     # combined_surface_height = new_rect.height + rotated_weapon.get_height()
-    #     # combined_surface = pygame.Surface((combined_surface_width, combined_surface_height), pygame.SRCALPHA)
-    #     #
-    #     # # Blit the player image onto the combined surface at the center
-    #     # combined_surface.blit(rotated_image, (
-    #     # combined_surface_width / 2 - new_rect.width / 2, combined_surface_height - new_rect.height))
-    #     #
-    #     # # Blit the weapon image onto the combined surface at the calculated offset position
-    #     # weapon_blit_position = (combined_surface_width / 2 + weapon_offset_x - rotated_weapon.get_width() / 2,
-    #     #                         combined_surface_height - new_rect.height / 2 + weapon_offset_y - rotated_weapon.get_height() / 2)
-    #     # combined_surface.blit(rotated_weapon, weapon_blit_position)
-    #     #
-    #     # # Update the player's rect to match the new combined image dimensions
-    #     # self.rect = combined_surface.get_rect(center=new_rect.center)
-    #
-    #     # Now, combined_surface contains both the player and the weapon as a single image
-    #     # You can return this surface to be drawn in your game loop
-    #     return rotated_image, rotated_weapon, location_of_weapon, self.rect.topleft
+
     def get_location(self):
         return self.rect.topleft
 
@@ -163,13 +104,13 @@ class Player(pygame.sprite.Sprite):
         angle = math.atan2(mouse_y - self.rect.centery, mouse_x - self.rect.centerx)
         angle = math.degrees(angle)
         if 0 <= angle < 90:
-            weapon_angle = math.atan2(mouse_y - self.rect.centery + 30, mouse_x - self.rect.centerx)
+            weapon_angle = math.atan2(mouse_y - self.rect.centery + 0.9375*self.weapon_image_size[0], mouse_x - self.rect.centerx)
         elif 90 <= angle < 180:
-            weapon_angle = math.atan2(mouse_y - self.rect.centery, mouse_x - self.rect.centerx + 30)
+            weapon_angle = math.atan2(mouse_y - self.rect.centery, mouse_x - self.rect.centerx + 0.9375*self.weapon_image_size[1])
         elif 180 <= angle < 270:
-            weapon_angle = math.atan2(mouse_y - self.rect.centery - 30, mouse_x - self.rect.centerx)
+            weapon_angle = math.atan2(mouse_y - self.rect.centery - 0.9375*self.weapon_image_size[0], mouse_x - self.rect.centerx)
         else:
-            weapon_angle = math.atan2(mouse_y - self.rect.centery, mouse_x - self.rect.centerx - 30)
+            weapon_angle = math.atan2(mouse_y - self.rect.centery, mouse_x - self.rect.centerx - 0.9375*self.weapon_image_size[1])
 
         # Calculate angle between player and mouse
 
@@ -179,8 +120,114 @@ class Player(pygame.sprite.Sprite):
 
         location = (location_of_fist[0] + adj, location_of_fist[1] + opp)
 
-
-
-
         return location
 
+class Inventory():
+    def __init__(self, x, y, size, user):
+        self.x = x
+        self.y = y
+        self.totalsize = 20
+        self.cur_size = 0
+        self.user = user
+        self.items = [None] * self.totalsize #array of 20 empty items
+        original_image = pygame.image.load("images/scroll_inventory.png").convert_alpha()
+        self.image = pygame.transform.scale(original_image, (700, 700))
+
+        self.rect = self.image.get_rect()
+        self.rect.midbottom = (self.x, self.y)
+        self.opened = False
+
+    def add_bone(self, bone):
+        for i in range(self.totalsize):
+            if self.items[i] is None:
+                self.items[i] = bone
+                self.cur_size += 1
+                return True
+        return False
+
+    def remove_item(self, item):
+        for i in range(0, self.cur_size - 1):
+            if self.items[i] == item:
+                self.items[i] = None
+                for j in range(i, self.totalsize - 1):
+                    self.items[j] = self.items[j + 1]
+                return None
+        return None
+
+    def get_item(self, index):
+        if 0 <= index < self.cur_size:
+            return self.items[index]
+        print("Invalid index.")
+        return None
+    def list_inventory(self):
+        for item in self.items:
+            print(item)
+    def draw_box(self, surface, x, y):
+        pygame.draw.rect(surface, (210, 180, 140), (x, y, 70, 70))
+        pygame.draw.rect(surface, (0, 0, 0), (x, y, 70, 70), 2)
+    def draw_inventory(self, surface):
+        #surface.blit(self.image, self.rect)
+        #first row of inventory
+        self.draw_box(surface, 220, 300)
+        self.draw_box(surface, 320, 300)
+        self.draw_box(surface, 420, 300)
+        self.draw_box(surface, 520, 300)
+        self.draw_box(surface, 620, 300)
+        #second row of inventory
+        self.draw_box(surface, 220, 400)
+        self.draw_box(surface, 320, 400)
+        self.draw_box(surface, 420, 400)
+        self.draw_box(surface, 520, 400)
+        self.draw_box(surface, 620, 400)
+        #third row of inventory
+        self.draw_box(surface, 220, 500)
+        self.draw_box(surface, 320, 500)
+        self.draw_box(surface, 420, 500)
+        self.draw_box(surface, 520, 500)
+        self.draw_box(surface, 620, 500)
+        #fourth row of inventory
+        self.draw_box(surface, 220, 600)
+        self.draw_box(surface, 320, 600)
+        self.draw_box(surface, 420, 600)
+        self.draw_box(surface, 520, 600)
+        self.draw_box(surface, 620, 600)
+
+    #This displays the items in the inventory it also uses logic and a double locking system to
+    # decide if it been clicked and chooses to open stats
+    def display_items(self, surface):
+        horizontal_inc = 0
+        vertical_inc = 0
+        horiz_count = 0
+        vert_count = 0
+
+        for index in range(self.cur_size):
+            item = self.get_item(index)
+            if horiz_count == 5:
+                horizontal_inc = 0
+                vert_count += 1
+                vertical_inc += 100
+                horiz_count = 0
+            #item.image = pygame.transform.scale(item.image, (70, 70))
+            if item is not None:
+                item_button = button.Button(220 + horizontal_inc, 300 + vertical_inc, item.image, .46)
+                #surface.blit(item.image, ((220 + horizontal_inc), 300 + vertical_inc))
+                b = item_button.draw(surface)
+                #Decides if it is already open or closed
+                if b and self.opened == False:
+                    time.sleep(.2)
+                    item.opened_in_inven = not item.opened_in_inven
+                    self.opened = not self.opened
+                    print("ran")
+                if b and self.opened == True:
+                    pygame.draw.rect(surface, (0, 100, 100), (750, 300, 400, 500), 2)
+                    print("close it")
+                    self.opened = False
+                #Sell code
+                if item.sold == True:
+                    self.items.remove(item)
+                    self.cur_size -= 1
+                    self.list_inventory()
+                    print("sold")
+
+            horizontal_inc += 100
+            horiz_count += 1
